@@ -7,4 +7,6 @@ Route::get('/home', function () {
     return "welcome";
 });
 
-Route::get('/index', [StaticPageController::class, 'index']);
+Route::get('/index', [StaticPageController::class, 'index'])->name('index');
+
+Route::get('/shop', function () {return view('shop');})->name('shop');
