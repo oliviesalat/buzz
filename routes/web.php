@@ -3,6 +3,9 @@
 use App\Http\Controllers\StaticPageController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    return 'hello';
+});
 Route::get('/home', function () {
     return "welcome";
 });
