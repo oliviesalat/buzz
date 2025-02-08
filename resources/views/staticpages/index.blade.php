@@ -4,7 +4,7 @@
 <div class="hero">
     <h1>Добро пожаловать в магазин Buzz!</h1>
     <p>Лучшие товары по лучшим ценам</p>
-    <a href="{{}}" class="btn btn-light">Перейти в магазин</a>
+    <a href="{{route('shop')}}" class="btn btn-light">Перейти в магазин</a>
 </div>
 
 <div class="container mt-5" id="about">

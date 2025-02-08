@@ -7,5 +7,8 @@ use Illuminate\Http\Request;
 
 class ShopController extends Controller
 {
-    //
+    public function mainpage()
+    {
+        return view('shop.shop');
+    }
 }

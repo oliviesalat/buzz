@@ -16,4 +16,6 @@ class StaticPageController extends Controller
     {
         return view('staticpages.about');
     }
+
+
 }
