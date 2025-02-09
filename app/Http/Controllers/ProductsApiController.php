@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ProductsApi\BaseController;
 use App\Http\Requests\ProductsApi\StoreRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
-class ProductsApiController extends Controller
+class ProductsApiController extends BaseController
 {
     public function index()
     {
-        $products = Product::all();
+        $products = $this->service->index();
         return response()->json([
             'products' => $products
         ], 200);
@@ -21,7 +22,7 @@ class ProductsApiController extends Controller
     public function store(StoreRequest $request)
     {
         $data = $request->validated();
-        $product = Product::create($data);
+        $product = $this->service->store($data);
         return response()->json([
             'message' => 'Product created',
             'product' => $product
@@ -30,7 +31,7 @@ class ProductsApiController extends Controller
 
     public function show($id)
     {
-        $product = Product::find($id);
+        $product = $this->service->find($id);
         if (!$product) {
             return response()->json(['message' => 'product not found'], 404);
         }
@@ -42,25 +43,24 @@ class ProductsApiController extends Controller
 
     public function update(Request $request, $id)
     {
-        $product = Product::find($id);
-        if (!$product) {
+        $data = $request->validated();
+        $product = $this->service->update($data, $id);
+        if ($product) {
+            return response()->json([
+                'message' => 'product updated',
+                'product' => $product
+            ], 200);
+        } else {
             return response()->json(['message' => 'product not found'], 404);
         }
-        $data = $request->validated();
-        $product->update($data);
-        return response()->json([
-            'message' => 'product updated',
-            'product' => $product
-        ], 200);
     }
 
     public function destroy($id)
     {
-        $product = Product::find($id);
+        $product = $this->service->destroy($id);
         if (!$product) {
             return response()->json(['message' => 'product not found'], 404);
         }
-        $product->delete();
         return response()->json([
             'message' => 'product deleted',
             'product' => $product
