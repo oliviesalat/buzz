@@ -51,14 +51,14 @@
                 const card = document.createElement('div');
                 card.className = 'col-md-4 mb-4'; // Колонка для Bootstrap
                 card.innerHTML = `
-                <div class="card" style="cursor: pointer;">
-                    <div class="card-body">
-                        <h5 class="card-title">${product.name}</h5>
-                        <p class="card-text">${product.description}</p>
-                        <p class="price">${product.price} ₽</p>
-                    </div>
-                </div>
-            `;
+        <a href="/shop/${product.id}" class="card" style="text-decoration: none; color: inherit;">
+            <div class="card-body">
+                <h5 class="card-title">${product.name}</h5>
+                <p class="card-text">${product.description}</p>
+                <p class="price">${product.price} ₽</p>
+            </div>
+        </a>
+    `;
                 container.appendChild(card);
             });
         }

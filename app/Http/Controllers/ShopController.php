@@ -15,6 +15,6 @@ class ShopController extends Controller
 
     public function show($id)
     {
-        return view('product.show'); // Возвращаем представление для отображения продукта
+        return view('shop.product');
     }
 }

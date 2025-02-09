@@ -1,14 +1,15 @@
-@extends('layouts.main') <!-- Предполагается, что ваш базовый шаблон называется main.blade.php -->
+@extends('layouts.main')
 
 @section('content')
+    <div class="hero">
+        <h1 id="product-name"></h1>
+    </div>
     <div class="container mt-5">
-        <div class="hero">
-            <h1 id="product-name"></h1>
-        </div>
         <div class="product-container mt-4">
             <p id="product-description"></p>
             <p id="product-price" class="h4"></p>
         </div>
+        <a href="{{ route('shop') }}" class="btn btn-success mt-3">Назад в магазин</a> <!-- Кнопка "Назад" -->
     </div>
 
     <script>
