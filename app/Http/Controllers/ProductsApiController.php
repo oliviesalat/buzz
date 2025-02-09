@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductsApi\StoreRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -13,17 +14,13 @@ class ProductsApiController extends Controller
         $products = Product::all();
         return response()->json([
             'products' => $products
-        ]);
+        ], 200);
     }
 
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required | string | max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|integer|min:0'
-        ]);
+        $data = $request->validated();
         $product = Product::create($data);
         return response()->json([
             'message' => 'Product created',
@@ -39,7 +36,7 @@ class ProductsApiController extends Controller
         }
         return response()->json([
             'product' => $product
-        ]);
+        ], 200);
     }
 
 
@@ -49,19 +46,15 @@ class ProductsApiController extends Controller
         if (!$product) {
             return response()->json(['message' => 'product not found'], 404);
         }
-        $data = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'description' => 'sometimes|nullable|string',
-            'price' => 'sometimes|integer|min:0'
-        ]);
+        $data = $request->validated();
         $product->update($data);
         return response()->json([
             'message' => 'product updated',
             'product' => $product
-        ]);
+        ], 200);
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
         $product = Product::find($id);
         if (!$product) {
@@ -71,6 +64,6 @@ class ProductsApiController extends Controller
         return response()->json([
             'message' => 'product deleted',
             'product' => $product
-        ]);
+        ], 200);
     }
 }
