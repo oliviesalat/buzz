@@ -4,15 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ProductsApi\BaseController;
+use App\Http\Requests\ProductsApi\FilterRequest;
 use App\Http\Requests\ProductsApi\StoreRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductsApiController extends BaseController
 {
-    public function index()
+    public function index(FilterRequest $request)
     {
-        $products = $this->service->index();
+        $products = $this->service->index($request);
         return response()->json([
             'products' => $products
         ], 200);

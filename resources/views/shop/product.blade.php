@@ -12,7 +12,7 @@
             <p id="product-description"></p>
             <p id="product-price" class="h4"></p>
         </div>
-        <a href="{{ route('shop') }}" class="btn btn-success mt-3">Назад в магазин</a> <!-- Кнопка "Назад" -->
+        <a href="{{ route('shop') }}" class="btn btn-success mt-3">Назад в магазин</a>
     </div>
 
     <script>
@@ -42,7 +42,6 @@
             }
         }
 
-        // Вызываем функцию для получения данных продукта
         fetchProduct();
     </script>
 @endsection

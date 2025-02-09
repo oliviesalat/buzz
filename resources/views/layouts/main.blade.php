@@ -27,7 +27,11 @@
             text-align: center;
             padding: 20px 0;
         }
-
+        #category-menu li.active {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
     </style>
 </head>
 <body>
