@@ -67,11 +67,12 @@
 
     <script>
         // Пример данных о товарах в корзине
-        let cartItems = [
-            { id: 1, name: 'Товар 1', price: 1000, quantity: 2 },
-            { id: 2, name: 'Товар 2', price: 1500, quantity: 1 },
-            { id: 3, name: 'Товар 3', price: 2000, quantity: 1 }
-        ];
+        let cartItems = await fetch(`/api/cart`)['cart'];
+        //     [
+        //     { id: 1, name: 'Товар 1', price: 1000, quantity: 2 },
+        //     { id: 2, name: 'Товар 2', price: 1500, quantity: 1 },
+        //     { id: 3, name: 'Товар 3', price: 2000, quantity: 1 }
+        // ];
 
         // Функция для отображения товаров в корзине
         function displayCartItems() {
