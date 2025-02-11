@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\ProductsApi;
 
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\ProductsApi\BaseController;
 use App\Http\Requests\ProductsApi\FilterRequest;
 use App\Http\Requests\ProductsApi\StoreRequest;
-use App\Models\Product;
 use Illuminate\Http\Request;
 
-class ProductsApiController extends BaseController
+class ProductsApiController extends BaseProductsController
 {
     public function index(FilterRequest $request)
     {

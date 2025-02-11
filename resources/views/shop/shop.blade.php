@@ -34,6 +34,15 @@
         .pagination .page-link {
             color: black;
         }
+        /* Стили для режима списка */
+        .list-view .card {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 15px;
+        }
+        .list-view .card-body {
+            flex: 1;
+        }
     </style>
     <div class="hero">
         <h1>Магазин</h1>
@@ -46,7 +55,6 @@
             <div class="col-md-3">
                 <h3>Категории</h3>
                 <ul class="list-group" id="category-menu">
-                    <!-- data-category="all" — пункт для отображения всех товаров -->
                     <li class="list-group-item active" data-category="all">Все товары</li>
                     <li class="list-group-item" data-category="mobiles">Mobiles</li>
                     <li class="list-group-item" data-category="computers">Computers</li>
@@ -58,6 +66,16 @@
             <!-- Основной контент с товарами -->
             <div class="col-md-9">
                 <h2>Наши товары</h2>
+
+                <!-- Переключатель отображения -->
+                <div class="d-flex justify-content-end mb-3">
+                    <button id="gridView" class="btn btn-outline-primary mr-2">
+                        <i class="fas fa-th"></i> <!-- Иконка для плиток -->
+                    </button>
+                    <button id="listView" class="btn btn-outline-secondary">
+                        <i class="fas fa-list"></i> <!-- Иконка для списка -->
+                    </button>
+                </div>
 
                 <!-- Выпадающий список для сортировки -->
                 <div class="form-group d-flex align-items-center justify-content-end">
@@ -79,14 +97,14 @@
     </div>
 
     <script>
-        // Глобальные переменные
-        let products = [];             // Товары текущей страницы
-        let currentSort = 'default';   // Текущий порядок сортировки
-        let selectedCategory = 'all';  // Выбранная категория (по умолчанию - все товары)
 
-        // Функция для получения товаров с учетом страницы и выбранной категории
+        let products = [];
+        let currentSort = 'default';
+        let selectedCategory = 'all';
+        let currentView = 'grid';
+
+
         async function fetchProducts(page = 1) {
-            // Формируем URL запроса с учетом выбранной категории
             let url = `/api/products?page=${page}`;
             if (selectedCategory !== 'all') {
                 url += `&category=${selectedCategory}`;
@@ -98,11 +116,8 @@
                     throw new Error('Сеть не отвечает');
                 }
                 const data = await response.json();
-                // Сохраняем товары текущей страницы
                 products = data.products.data;
-                // Обновляем переключатели страниц, передавая данные пагинации
                 displayPagination(data.products);
-                // Отображаем товары с учетом выбранной сортировки
                 sortProducts(currentSort);
             } catch (error) {
                 console.error('Ошибка при загрузке продуктов:', error);
@@ -111,17 +126,17 @@
             }
         }
 
-        // Функция для отображения товаров
+
         function displayProducts(productsToShow) {
             const container = document.getElementById('product-container');
-            container.innerHTML = ''; // Очищаем контейнер
+            container.innerHTML = '';
             if (productsToShow.length === 0) {
                 container.innerHTML = '<p>Нет доступных продуктов.</p>';
                 return;
             }
             productsToShow.forEach(product => {
                 const card = document.createElement('div');
-                card.className = 'col-md-4 mb-4';
+                card.className = currentView === 'grid' ? 'col-md-4 mb-4' : 'col-12 mb-3 card list-view';
                 card.innerHTML = `
                 <a href="/shop/${product.id}" class="card" style="text-decoration: none; color: inherit;">
                     <div class="card-body">
@@ -136,34 +151,32 @@
             });
         }
 
-        // Функция для сортировки товаров
+
         function sortProducts(order) {
-            currentSort = order; // Обновляем выбранный порядок сортировки
+            currentSort = order;
             let sortedProducts;
             if (order === 'asc') {
                 sortedProducts = [...products].sort((a, b) => a.price - b.price);
             } else if (order === 'desc') {
                 sortedProducts = [...products].sort((a, b) => b.price - a.price);
             } else {
-                sortedProducts = products; // Оставляем исходный порядок
+                sortedProducts = products;
             }
             displayProducts(sortedProducts);
         }
 
-        // Функция для отображения переключателей страниц
+
         function displayPagination(paginationData) {
             const paginationContainer = document.getElementById('pagination-controls');
             let paginationHTML = `<nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">`;
 
             paginationData.links.forEach(link => {
-                // Определяем классы для активного и неактивного элемента
                 const activeClass = link.active ? "active" : "";
                 const disabledClass = link.url === null ? "disabled" : "";
                 const label = link.label;
                 let pageNumber = "";
                 if (link.url) {
-                    // Извлекаем номер страницы из URL
                     const url = new URL(link.url);
                     pageNumber = url.searchParams.get("page");
                 }
@@ -176,7 +189,6 @@
             paginationHTML += `</ul></nav>`;
             paginationContainer.innerHTML = paginationHTML;
 
-            // Вешаем обработчики кликов на ссылки пагинации
             const links = paginationContainer.querySelectorAll('.page-link');
             links.forEach(link => {
                 link.addEventListener('click', function(e) {
@@ -189,34 +201,35 @@
             });
         }
 
-        // Инициализация при загрузке страницы
+
         document.addEventListener('DOMContentLoaded', function() {
-            // Загружаем первую страницу товаров
             fetchProducts();
 
-            // Обработчик изменения сортировки
             document.getElementById('sortSelect').addEventListener('change', function() {
                 sortProducts(this.value);
             });
 
-            // Обработчик кликов по меню категорий
             const categoryMenu = document.getElementById('category-menu');
             categoryMenu.addEventListener('click', function(e) {
                 if (e.target && e.target.nodeName === "LI") {
-                    // Снимаем класс active со всех пунктов
                     const items = categoryMenu.querySelectorAll('li');
                     items.forEach(item => item.classList.remove('active'));
-                    // Добавляем класс active к выбранному пункту
                     e.target.classList.add('active');
-                    // Обновляем выбранную категорию
                     selectedCategory = e.target.getAttribute('data-category');
-                    // Загружаем товары для выбранной категории, начиная с первой страницы
                     fetchProducts(1);
                 }
             });
+
+
+            document.getElementById('gridView').addEventListener('click', function() {
+                currentView = 'grid';
+                displayProducts(products);
+            });
+
+            document.getElementById('listView').addEventListener('click', function() {
+                currentView = 'list';
+                displayProducts(products);
+            });
         });
     </script>
-
-
-
 @endsection

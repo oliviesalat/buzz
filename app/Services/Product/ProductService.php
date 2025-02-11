@@ -4,7 +4,7 @@ namespace App\Services\Product;
 
 use App\Models\Product;
 
-class Service
+class ProductService
 {
     public function index($request)
     {

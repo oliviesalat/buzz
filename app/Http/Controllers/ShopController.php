@@ -13,8 +13,13 @@ class ShopController extends Controller
     }
 
 
-    public function show($id)
+    public function product($id)
     {
         return view('shop.product');
+    }
+
+    public function cart()
+    {
+        return view('shop.cart');
     }
 }
