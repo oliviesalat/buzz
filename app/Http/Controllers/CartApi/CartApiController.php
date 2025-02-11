@@ -8,7 +8,7 @@ class CartApiController extends BaseCartController
 {
     public function index()
     {
-
+        //
     }
 
     public function store()
@@ -16,9 +16,9 @@ class CartApiController extends BaseCartController
 
     }
 
-    public function show()
+    public function show($id)
     {
-
+        $cart = $this->service->find($id);
     }
 
     public function update()
