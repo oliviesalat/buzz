@@ -9,4 +9,8 @@ class Cart extends Model
 {
     /** @use HasFactory<\Database\Factories\CartFactory> */
     use HasFactory;
+
+    public $fillable = ['session_id', 'user_id', 'product_id', 'count'];
+
+
 }

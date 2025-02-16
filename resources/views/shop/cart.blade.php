@@ -8,29 +8,36 @@
             padding: 100px 0;
             text-align: center;
         }
+
         .card {
             transition: background 0.3s;
         }
+
         .card:hover {
             background: rgba(0, 0, 0, 0.05);
         }
+
         /* Стили для таблицы корзины */
         .cart-table {
             width: 100%;
             border-collapse: collapse;
         }
+
         .cart-table th, .cart-table td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
+
         .cart-table th {
             background-color: #f2f2f2;
         }
+
         .btn-remove {
             color: red;
             cursor: pointer;
         }
+
         .btn-remove:hover {
             text-decoration: underline;
         }
@@ -66,64 +73,120 @@
     </div>
 
     <script>
-        // Пример данных о товарах в корзине
-        let cartItems = [
-            { id: 1, name: 'Товар 1', price: 1000, quantity: 2 },
-            { id: 2, name: 'Товар 2', price: 1500, quantity: 1 },
-            { id: 3, name: 'Товар 3', price: 2000, quantity: 1 }
-        ];
+        let products = [];
 
-        // Функция для отображения товаров в корзине
-        function displayCartItems() {
+        async function fetchCartItems() {
+            const url = '/cart';
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                displayCartItems(data);
+
+            } catch (error) {
+                console.error('Ошибка при загрузке продуктов:', error);
+                document.getElementById('cart-items').innerHTML =
+                    '<p>Не удалось загрузить продукты. Пожалуйста, попробуйте позже.</p>';
+            }
+        }
+
+        async function getProduct(product_id) {
+            let url = `/api/products/${product_id}`;
+            try {
+                const response = await fetch(url);
+                const product = await response.json();
+                console.log('92', product['product']);
+                return product['product'];
+            } catch (error) {
+                console.error('Ошибка при загрузке продуктов:', error);
+                document.getElementById('cart-items').innerHTML =
+                    '<p>Не удалось загрузить продукт. Пожалуйста, попробуйте позже.</p>';
+            }
+
+        }
+
+
+        async function displayCartItems(cartItems) {
             const cartContainer = document.getElementById('cart-items');
-            cartContainer.innerHTML = ''; // Очищаем контейнер
+            cartContainer.innerHTML = '';
             let total = 0;
 
-            cartItems.forEach(item => {
-                const totalPrice = item.price * item.quantity;
-                total += totalPrice;
+            for (const item of cartItems) {
+                //cartItems.forEach(async item => {
+                const product = await getProduct(item['product_id']);
+                console.log('112', product);
+                const totalProductPrice = product['price'] * item['count'];
+                console.log('totalProductPrice', totalProductPrice);
+                total += totalProductPrice;
 
                 const row = document.createElement('tr');
+
                 row.innerHTML = `
-                    <td>${item.name}</td>
-                    <td>${item.price} ₽</td>
+                    <td>${product['name']}</td>
+                    <td>${product['price']} ₽</td>
                     <td>
-                        <input type="number" value="${item.quantity}" min="1" data-id="${item.id}" class="quantity-input">
+                        <input type="number" value="${item.count}" min="1" data-id="${item['product_id']}" class="quantity-input">
                     </td>
-                    <td>${totalPrice} ₽</td>
-                    <td><span class="btn-remove" data-id="${item.id}">Удалить</span></td>
+                    <td>${totalProductPrice} ₽</td>
+                    <td><span class="btn-remove" data-id="${item['product_id']}">Удалить</span></td>
                 `;
                 cartContainer.appendChild(row);
-            });
-
+            }
+            console.log('total', total);
             document.getElementById('total-price').innerText = total;
         }
 
         // Обработчик изменения количества товара
-        document.addEventListener('input', function(e) {
+        document.addEventListener('input', function (e) {
             if (e.target.classList.contains('quantity-input')) {
                 const id = parseInt(e.target.getAttribute('data-id'));
                 const quantity = parseInt(e.target.value);
-                const item = cartItems.find(item => item.id === id);
-                if (item) {
-                    item.quantity = quantity;
-                    displayCartItems(); // Обновляем отображение корзины
-                }
+                updateCartItem(id, quantity);
             }
         });
 
-        // Обработчик удаления товара
-        document.addEventListener('click', function(e) {
+        function updateCartItem(productId, count) {
+            fetch(`/cart/${productId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({count: count}),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Ошибка при обновлении товара');
+                    }
+                    return fetchCartItems(); // Обновляем корзину
+                })
+                .catch(error => console.error('Ошибка:', error));
+        }
+
+
+        document.addEventListener('click', function (e) {
             if (e.target.classList.contains('btn-remove')) {
                 const id = parseInt(e.target.getAttribute('data-id'));
-                cartItems = cartItems.filter(item => item.id !== id);
-                displayCartItems(); // Обновляем отображение корзины
+                deleteCartItem(id);
             }
         });
 
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            displayCartItems();
+
+        function deleteCartItem(productId) {
+            fetch(`/cart/${productId}`, {
+                method: 'DELETE',
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Ошибка при удалении товара');
+                    }
+                    return fetchCartItems(); // Обновляем корзину
+                })
+                .catch(error => console.error('Ошибка:', error));
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchCartItems();
         });
     </script>
 @endsection
