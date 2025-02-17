@@ -7,6 +7,9 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    return '<a href="' . route('mainpage') . '">main</a>';
+});
 
 Route::get('/main', [StaticPageController::class, 'index'])->name('mainpage');
 Route::get('/main/about', [StaticPageController::class, 'about'])->name('aboutpage');
@@ -28,7 +31,7 @@ Route::middleware([StartSession::class])
         Route::get('/cart/{product_id}', [CartApiController::class, 'show']);
         Route::get('/cart', [CartApiController::class, 'index']);
 
-        Route::post('/cart', [CartApiController::class, 'store']);
+        Route::post('/cart', [CartApiController::class, 'store'])->name('store');
 
         Route::put('/cart/{product_id}', [CartApiController::class, 'update']);
         Route::delete('/cart/{product_id}', [CartApiController::class, 'destroy']);

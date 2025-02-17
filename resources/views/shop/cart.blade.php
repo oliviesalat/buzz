@@ -122,7 +122,7 @@
                 const row = document.createElement('tr');
 
                 row.innerHTML = `
-                    <td>${product['name']}</td>
+                    <td><a href="/shop/${product['id']}" >${product['name']}</a></td>
                     <td>${product['price']} ₽</td>
                     <td>
                         <input type="number" value="${item.count}" min="1" data-id="${item['product_id']}" class="quantity-input">
@@ -136,11 +136,12 @@
             document.getElementById('total-price').innerText = total;
         }
 
-        // Обработчик изменения количества товара
-        document.addEventListener('input', function (e) {
-            if (e.target.classList.contains('quantity-input')) {
-                const id = parseInt(e.target.getAttribute('data-id'));
-                const quantity = parseInt(e.target.value);
+        document.addEventListener('input', function (event) {
+            if (event.target.classList.contains('quantity-input')) {
+                const id = parseInt(event.target.getAttribute('data-id'));
+                console.log(id);
+                const quantity = parseInt(event.target.value);
+                console.log(quantity);
                 updateCartItem(id, quantity);
             }
         });
@@ -157,7 +158,7 @@
                     if (!response.ok) {
                         throw new Error('Ошибка при обновлении товара');
                     }
-                    return fetchCartItems(); // Обновляем корзину
+                    return fetchCartItems();
                 })
                 .catch(error => console.error('Ошибка:', error));
         }
@@ -179,7 +180,7 @@
                     if (!response.ok) {
                         throw new Error('Ошибка при удалении товара');
                     }
-                    return fetchCartItems(); // Обновляем корзину
+                    return fetchCartItems();
                 })
                 .catch(error => console.error('Ошибка:', error));
         }
